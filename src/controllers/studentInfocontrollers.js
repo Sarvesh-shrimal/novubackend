@@ -1,36 +1,47 @@
+const { Novu } = require('@novu/node');
 const studentinfoModell = require("../Modells/studentinfoModell");
-const jwt = require('jsonwebtoken')
-const { Novu } = require('@novu/node')
 
-const novu = new Novu("4427e7f40fcc94310c78abb45bc3591c");
+const novu = new Novu("cac2fe9e773b5ab3e65a7d7979d9f1a2");
 
 const studentinfo = async (req, res) => {
-    let { student_id, description } = req.body;
-
-
-    const token = req.headers.authorization?.split(" ")[1];
-    const decoded = jwt.verify(token, "39rijw4tj94wyj94yjgmn9erhy5y");
-
-    const subscriberId = decoded._id; // extract from token securely
+  try {
+    const { student_id, description } = req.body;
 
     const newUser = new studentinfoModell({
+      student_id,
+      description
+    });
+    await newUser.save();
+
+    // Identify subscriber
+    let response;
+    try {
+      response = await novu.subscribers.identify(student_id, {
+        firstName: "Student", // You can make dynamic
+      });
+    } catch (err) {
+      console.error("Novu identify error:", err);
+      return res.status(500).json({ error: "Failed to identify subscriber in Novu" });
+    }
+
+    // Trigger notification
+ 
+
+    const resp = await novu.trigger('onboarding-demo-workflow', {
+      to: {
+        subscriberId: student_id
+      },
+      payload: {
         student_id,
         description
-    })
-    await newUser.save()
-    await novu.trigger('student-notification', {
-        to: {
-            subscriberId
-        },
-        payload: {
-            senderName: decoded.name,     
-            senderId: decoded._id,
-            description
-        }
+      }
     });
-    res.status(200).json({ msg: "Info save successfully" });
-}
+    res.status(200).json({ msg: "Info saved and notification sent" });
 
-module.exports = {
-    studentinfo,
-}
+  } catch (error) {
+    console.error("Error in studentinfo:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { studentinfo };
