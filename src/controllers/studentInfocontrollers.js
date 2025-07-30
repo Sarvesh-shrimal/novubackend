@@ -1,11 +1,6 @@
 const studentinfoModell = require("../Modells/studentinfoModell");
 const jwt = require('jsonwebtoken')
 const { Novu } = require('@novu/node')
-// const { config } = require("dotenv")
-
-// config({
-//     path: "./.env"
-// })
 
 const novu = new Novu("4427e7f40fcc94310c78abb45bc3591c");
 
@@ -28,7 +23,7 @@ const studentinfo = async (req, res) => {
             subscriberId
         },
         payload: {
-            senderName: decoded.name,     // ✅ from decoded token
+            senderName: decoded.name,     
             senderId: decoded._id,
             description
         }
