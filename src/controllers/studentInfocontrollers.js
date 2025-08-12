@@ -27,13 +27,12 @@ const studentinfo = async (req, res) => {
     // Trigger notification
  
 
-    const resp = await novu.trigger('onboarding-demo-workflow', {
+    const resp = await novu.trigger('task-create', {
       to: {
         subscriberId: student_id
       },
       payload: {
-        student_id,
-        description
+        message: " i am here ",
       }
     });
     res.status(200).json({ msg: "Info saved and notification sent" });

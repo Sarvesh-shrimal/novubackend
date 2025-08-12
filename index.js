@@ -38,6 +38,7 @@ const startserver = async () => {
         console.log("Database Connected")
 
         app.use('/api', router)
+        app.use('api', router)
 
         app.listen(PORT, () => {
             console.log(`app is runing on port ${PORT}`)
