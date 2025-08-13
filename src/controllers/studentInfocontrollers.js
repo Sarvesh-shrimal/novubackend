@@ -1,7 +1,7 @@
 const { Novu } = require('@novu/node');
 const studentinfoModell = require("../Modells/studentinfoModell");
 
-const novu = new Novu("cac2fe9e773b5ab3e65a7d7979d9f1a2");
+const novu = new Novu("4427e7f40fcc94310c78abb45bc3591c");
 
 const studentinfo = async (req, res) => {
   try {
@@ -32,7 +32,7 @@ const studentinfo = async (req, res) => {
         subscriberId: student_id
       },
       payload: {
-        message: " i am here ",
+        message: description,
       }
     });
     res.status(200).json({ msg: "Info saved and notification sent" });

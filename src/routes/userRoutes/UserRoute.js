@@ -9,6 +9,6 @@ router.post('/login', Login);
 router.get('/all-user', authentication, allusers)
 router.post('/student-info', authentication, studentinfo)
 // router.get('/')
-router.get('/notification', authentication, getNotifications);
+router.get('/notifications/:subscriberId',  getNotifications);
 
 module.exports = router;
