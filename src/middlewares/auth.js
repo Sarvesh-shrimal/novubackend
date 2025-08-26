@@ -1,22 +1,27 @@
-const jwt = require('jsonwebtoken');
+// src/middlewares/auth.js
+import jwt from "jsonwebtoken";
 
-const authentication = async (req, res, next) =>{
-    let token = req.headers['x-auth-token'];
+export const authentication = async (req, res, next) => {
+    try {
+        let token = req.headers["x-auth-token"];
 
-    if(!token) {
-        return res
-        .status(401)
-        .send({status: false, msg: "Token must be present"})
-    }
-    jwt.verify(token, process.env.PASSKEY, function(err, decodedToken) {
-        if(err){
-            return res.status(400).send({status: false, msg: "Token must be Present"});
+        if (!token) {
+            return res
+                .status(401)
+                .json({ status: false, msg: "Token must be present" });
         }
-        req.user = decodedToken
-        next();
-    });
-};
 
-module.exports = {
-    authentication,
-}
+        jwt.verify(token, process.env.PASSKEY, (err, decodedToken) => {
+            if (err) {
+                return res
+                    .status(400)
+                    .json({ status: false, msg: "Invalid or expired token" });
+            }
+
+            req.user = decodedToken; // attach decoded data to request
+            next();
+        });
+    } catch (error) {
+        return res.status(500).json({ status: false, msg: "Auth error", error: error.message });
+    }
+};

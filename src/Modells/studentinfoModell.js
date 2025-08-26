@@ -1,17 +1,21 @@
-const mongoose = require ('mongoose')
+import mongoose from "mongoose";
 
-const studentinformation = new mongoose.Schema({
-    description : {
-        type: String,
-        require : true,
-    }, 
-    student_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "studentuser"
+const studentInformationSchema = new mongoose.Schema(
+    {
+        description: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        student_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "studentuser",
+            required: true,
+        },
     },
-    
-}, 
-    {timestamps: true}
+    { timestamps: true }
 );
 
-module.exports = mongoose.model("studentinfor", studentinformation);
+const studentinfoModell = mongoose.model("studentinfo", studentInformationSchema);
+
+export default studentinfoModell;

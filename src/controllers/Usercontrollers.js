@@ -1,11 +1,10 @@
-const express = require('express')
-const bcrypt = require('bcrypt');
-const userModells = require('../Modells/userModells');
-const jwt = require('jsonwebtoken')
+// src/controllers/Usercontrollers.js
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import userModells from "../Modells/userModells.js";
 
-const Registeruser = async (req, res) => {
+export const Registeruser = async (req, res) => {
     try {
-
         let { name, student_id, email, password } = req.body;
 
         const salt = await bcrypt.genSalt(10);
@@ -15,43 +14,48 @@ const Registeruser = async (req, res) => {
             name,
             student_id,
             email,
-            password: hashPassword
-        })
+            password: hashPassword,
+        });
+
         await newUser.save();
-        res.status(200).json({ msg: "user Register successfully" });
+        res.status(200).json({ msg: "User registered successfully" });
     } catch (error) {
-        res.status(500).json({ msg: "server Error" + error.message });
+        res.status(500).json({ msg: "Server error: " + error.message });
     }
 };
 
-const Login = async (req, res) => {
+export const Login = async (req, res) => {
     try {
         let { email, password } = req.body;
 
-        const user = await userModells.findOne({
-            $or: [{ email: email }],
-        });
+        const user = await userModells.findOne({ email: email });
+        if (!user) {
+            return res.status(404).json({ msg: "User not found" });
+        }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).json({ msg: "Invalid credentials" });
         }
 
-        const token = jwt.sign({ userId: user._id }, process.env.PASSKEY);
-        // console.log(user.email);
-        return res.status(200).json({ token, userId: user });
+        const token = jwt.sign({ userId: user._id }, process.env.PASSKEY, {
+            expiresIn: "1d",
+        });
+
+        return res.status(200).json({ token, user });
     } catch (error) {
-        res.status(500).json({ message: "Internal Server error", error: error.message });
+        res.status(500).json({
+            message: "Internal server error",
+            error: error.message,
+        });
     }
-}
+};
 
-const allusers = async (req, res) =>{
-    const user = await userModells.find();
-    res.status(200).json({data : user})
-}
-
-module.exports = {
-    Registeruser,
-    Login,
-    allusers,
-}
+export const allusers = async (req, res) => {
+    try {
+        const users = await userModells.find();
+        res.status(200).json({ data: users });
+    } catch (error) {
+        res.status(500).json({ msg: "Server error: " + error.message });
+    }
+};
