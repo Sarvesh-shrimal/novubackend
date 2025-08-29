@@ -1,6 +1,13 @@
 {
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "test":"cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
+    "test:watch": "npm test -- --watch",
+    "coverage":"npm test -- --watch"
+  },
+  "test":{
+    "testEnviroment": "node",
+    "roots" : ["<rootDir>/tests"]
   },
   "type": "module",
   "dependencies": {
@@ -19,6 +26,10 @@
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.23.1",
-    "nodemon": "^3.1.10"
+    "cross-env": "^10.0.0",
+    "jest": "^30.1.1",
+    "mongodb-memory-server": "^10.2.0",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.4"
   }
 }
