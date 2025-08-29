@@ -1,2 +1,0 @@
-import YAML from "yamljs";
-const openapiDoc = YAML.load("./swagger.yaml")

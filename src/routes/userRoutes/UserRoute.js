@@ -1,4 +1,3 @@
-// src/routes/userRoutes/UserRoute.js
 import express from "express";
 import { getNotifications } from "../../controllers/notification.js";
 import { studentinfo } from "../../controllers/studentInfocontrollers.js";
