@@ -1,10 +1,9 @@
-import { Novu } from "@novu/node";
-
+const Novu = require("@novu/node")
 // Initialize Novu with API Key (recommended: single instance, not inside every function)
 const novu = "fdasfdasdffadsf";
 
 // Trigger a notification
-export const sendNotification = async (req, res) => {
+ const sendNotification = async (req, res) => {
   try {
     const { subscriberId } = req.body;
     const message = "I am here";
@@ -26,7 +25,7 @@ export const sendNotification = async (req, res) => {
 };
 
 // Get a subscriber's feed from Novu
-export const getNotifications = async (req, res) => {
+ const getNotifications = async (req, res) => {
   try {
     const { subscriberId } = req.params;
     const { data } = await novu.subscribers.getNotificationsFeed(subscriberId);
@@ -37,3 +36,7 @@ export const getNotifications = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch notifications" });
   }
 };
+
+module.exports = {
+  getNotifications, sendNotification
+}

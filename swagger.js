@@ -1,6 +1,5 @@
-import swaggerJSDoc from "swagger-jsdoc";
-// const isProd = process.env.NODE_ENV === "production";
-export const swaggerSpec = swaggerJSDoc({
+const swaggerJSDoc = require("swagger-jsdoc")
+const swaggerSpec = swaggerJSDoc({
     definition: {
         openapi: "3.0.3",
         info: {
@@ -34,3 +33,5 @@ export const swaggerSpec = swaggerJSDoc({
     },
     apis: ["./src/routes/userRoutes/*.js", "./index.js"] // files to scan for @openapi comments
 });
+
+module.exports  = swaggerSpec

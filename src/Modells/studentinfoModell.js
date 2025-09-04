@@ -1,5 +1,4 @@
-import mongoose from "mongoose";
-
+const mongoose = require("mongoose")
 const studentInformationSchema = new mongoose.Schema(
     {
         description: {
@@ -18,4 +17,4 @@ const studentInformationSchema = new mongoose.Schema(
 
 const studentinfoModell = mongoose.model("studentinfo", studentInformationSchema);
 
-export default studentinfoModell;
+module.exports = studentinfoModell;

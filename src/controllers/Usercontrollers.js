@@ -1,11 +1,14 @@
-// src/controllers/Usercontrollers.js
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import userModells from "../Modells/userModells.js";
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const userModells = require("../Modells/userModells.js");
 
-export const Registeruser = async (req, res) => {
+ const Registeruser = async (req, res) => {
     try {
         let { name, student_id, email, password } = req.body;
+
+        if(!name || !student_id || !email || !password) {
+            return res.status(400).json({msg: "All Field are required"})
+        }
 
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(password, salt);
@@ -18,13 +21,13 @@ export const Registeruser = async (req, res) => {
         });
 
         await newUser.save();
-        res.status(200).json({ msg: "User registered successfully" });
+        res.status(201).json({ msg: "User registered successfully" });
     } catch (error) {
         res.status(500).json({ msg: "Server error: " + error.message });
     }
 };
 
-export const Login = async (req, res) => {
+ const Login = async (req, res) => {
     try {
         let { email, password } = req.body;
 
@@ -42,7 +45,7 @@ export const Login = async (req, res) => {
             expiresIn: "1d",
         });
 
-        return res.status(200).json({ token, user });
+        return res.status(200).json({ token });
     } catch (error) {
         res.status(500).json({
             message: "Internal server error",
@@ -51,7 +54,7 @@ export const Login = async (req, res) => {
     }
 };
 
-export const allusers = async (req, res) => {
+ const allusers = async (req, res) => {
     try {
         const users = await userModells.find();
         res.status(200).json({ data: users });
@@ -59,3 +62,7 @@ export const allusers = async (req, res) => {
         res.status(500).json({ msg: "Server error: " + error.message });
     }
 };
+
+module.exports = {
+    allusers, Login, Registeruser
+}

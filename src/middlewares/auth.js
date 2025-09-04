@@ -1,7 +1,5 @@
-// src/middlewares/auth.js
-import jwt from "jsonwebtoken";
-
-export const authentication = async (req, res, next) => {
+const jwt = require("jsonwebtoken")
+ const authentication = async (req, res, next) => {
     try {
         let token = req.headers["x-auth-token"];
 
@@ -25,3 +23,5 @@ export const authentication = async (req, res, next) => {
         return res.status(500).json({ status: false, msg: "Auth error", error: error.message });
     }
 };
+
+module.exports = authentication;

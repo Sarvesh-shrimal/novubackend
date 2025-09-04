@@ -1,13 +1,13 @@
 // index.js
-import express from "express";
-import mongoose from "mongoose";
-import swaggerUi from "swagger-ui-express";
-import dotenv from "dotenv";
-import cors from "cors";
-import cookieParser from "cookie-parser";
-import router from "./src/routes/userRoutes/UserRoute.js";
-import { swaggerSpec } from "./swagger.js";
-import { middleware as openApiValidator } from "express-openapi-validator"; // ✅ correct import
+const express = require("express")
+const mongoose = require("mongoose")
+const swaggerUi = require("swagger-ui-express")
+const dotenv = require("dotenv")
+const cors = require("cors")
+const cookieParser = require("cookie-parser")
+const router = require('./src/routes/userRoutes/UserRoute.js')
+const swaggerSpec = require("./swagger.js")
+const {middleware} = require("express-openapi-validator")
 
 dotenv.config({ path: "./.env" });
 
@@ -33,9 +33,9 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true 
 app.get("/docs.json", (_req, res) => res.json(swaggerSpec));
 
 app.use(
-  openApiValidator({
+  middleware({
     apiSpec: swaggerSpec,          
-    validateRequests: true,        
+    // validateRequests: true,        
     validateResponses: true,      
   })
 );
@@ -43,14 +43,15 @@ app.use(
 app.use("/api", router);
 
 const PORT = process.env.PORT || 5000;
-const db = process.env.DB_DEVELOPMENT_URL;
+const db = process.env.DB_DEVELOPMENT_URL || process.env.MONGO_URI;
+
 
 const startserver = async () => {
   try {
     await mongoose.connect(db);
     console.log("✅ Database Connected");
 
-    app.listen(PORT, () => {
+    await app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📚 Swagger Docs: http://localhost:${PORT}/docs`);
     });
@@ -60,4 +61,10 @@ const startserver = async () => {
   }
 };
 
-startserver();
+if (process.env.NODE_ENV !== "test" && require.main === module) {
+  console.log("hello");
+  startserver();
+}
+// startserver();
+
+module.exports = app;

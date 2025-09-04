@@ -1,8 +1,11 @@
-import express from "express";
-import { getNotifications } from "../../controllers/notification.js";
-import { studentinfo } from "../../controllers/studentInfocontrollers.js";
-import { Registeruser, Login, allusers } from "../../controllers/Usercontrollers.js";
-import { authentication } from "../../middlewares/auth.js";
+const express = require("express");
+const { getNotifications } = require("../../controllers/notification.js");
+// const { studentinfo } = require("../../controllers/studentInfocontrollers.js");
+const { Registeruser, Login, allusers } = require("../../controllers/Usercontrollers.js");
+const authentication = require("../../middlewares/auth.js");
+const  validate  = require("../../middlewares/validate.js");
+const { registerSchema } = require("../../validators/userSchema.js");
+
 
 const router = express.Router();
 
@@ -23,6 +26,7 @@ const router = express.Router();
  *               - name
  *               - email
  *               - password
+ *               - student_id
  *             properties:
  *               name:
  *                 type: string
@@ -30,13 +34,32 @@ const router = express.Router();
  *                 type: string
  *               password:
  *                 type: string
+ *               student_id:
+ *                 type: string
  *     responses:
  *       201:
  *         description: User registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   example: User registered successfully
  *       400:
- *         description: Bad request
+ *         description: Bad request (missing fields)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   example: All Field are required
  */
-router.post("/user-register", Registeruser);
+router.post("/user-register", validate(registerSchema), Registeruser);
+
 
 /**
  * @openapi
@@ -45,12 +68,34 @@ router.post("/user-register", Registeruser);
  *     summary: Login user
  *     tags:
  *       - Users
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
  *     responses:
  *       200:
  *         description: User logged in successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                 
  *       401:
  *         description: Invalid credentials
+ *       404:
+ *         description: User not found
  */
+
 router.post("/login", Login);
 
 /**
@@ -58,13 +103,25 @@ router.post("/login", Login);
  * /api/all-user:
  *   get:
  *     summary: Get all users
- *     security:
- *       - bearerAuth: []
  *     tags:
  *       - Users
  *     responses:
  *       200:
- *         description: List of users
+ *         description: List of users   # <-- REQUIRED
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                       email:
+ *                         type: string
  */
 router.get("/all-user", authentication, allusers);
 
@@ -95,7 +152,7 @@ router.get("/all-user", authentication, allusers);
  *       200:
  *         description: Info saved and notification sent
  */
-router.post("/student-info", authentication, studentinfo);
+// router.post("/student-info", authentication, studentinfo);
 
 /**
  * @openapi
@@ -116,4 +173,5 @@ router.post("/student-info", authentication, studentinfo);
  */
 router.get("/notifications/:subscriberId", getNotifications);
 
-export default router;
+
+module.exports = router;

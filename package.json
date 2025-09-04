@@ -1,15 +1,20 @@
 {
+  "type": "commonjs",
+  "name": "protrac-backend",
+  "version": "1.0.0",
+  "private": true,
   "scripts": {
     "dev": "nodemon index.js",
-    "test":"cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
+    "test": "cross-env NODE_ENV=test jest --runInBand",
     "test:watch": "npm test -- --watch",
-    "coverage":"npm test -- --watch"
+    "coverage": "npm test -- --coverage"
   },
-  "test":{
-    "testEnviroment": "node",
-    "roots" : ["<rootDir>/tests"]
+  "jest": {
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/tests/jest.setup.js"
+    ]
   },
-  "type": "module",
   "dependencies": {
     "@novu/node": "^2.6.6",
     "bcrypt": "^6.0.0",
@@ -22,10 +27,12 @@
     "mongoose": "^8.16.5",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
-    "yamljs": "^0.3.0"
+    "yamljs": "^0.3.0",
+    "zod": "^4.1.5"
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.23.1",
+    "@types/supertest": "^6.0.3",
     "cross-env": "^10.0.0",
     "jest": "^30.1.1",
     "mongodb-memory-server": "^10.2.0",
